@@ -161,6 +161,49 @@ const App = () => {
       renderSVG();
     });
   }, []);
+  useEffect(() => {
+    const modelViewer = modelViewerRef.current;
+
+    const arButton = document.getElementById("ar-button");
+    const arPrompt = document.getElementById("ar-prompt");
+    const arFailure = document.getElementById("ar-failure");
+
+    arButton.addEventListener("click", () => {
+      modelViewer.enterAR();
+    });
+
+    modelViewer.addEventListener("ar-status", (event) => {
+      if (event.detail.status === "session-started") {
+        arPrompt.style.display = "none";
+        arFailure.style.display = "none";
+      } else if (event.detail.status === "not-supported") {
+        arButton.style.display = "none";
+        arPrompt.style.display = "none";
+        arFailure.style.display = "block";
+      } else if (event.detail.status === "session-failed") {
+        arButton.style.display = "none";
+        arPrompt.style.display = "none";
+        arFailure.style.display = "block";
+      }
+    });
+  }, []);
+
+  const switchSrc = (event) => {
+    const selectedValue = event.target.value;
+    const modelViewer = modelViewerRef.current;
+
+    if (selectedValue === "chair") {
+      modelViewer.src =
+        "https://arnxt-models-webar.s3.ap-south-1.amazonaws.com/curtain.glb";
+    } else if (selectedValue === "mixer") {
+      modelViewer.src =
+        "https://arnxt-models-webar.s3.ap-south-1.amazonaws.com/curtain.glb";
+    } else if (selectedValue === "cactus") {
+      modelViewer.src =
+        "https://arnxt-models-webar.s3.ap-south-1.amazonaws.com/curtain.glb";
+    }
+  };
+
   return (
     <div>
       <model-viewer
@@ -181,7 +224,7 @@ const App = () => {
         </button>
 
         <div id="ar-prompt">
-          <img src="../../assets/hand.png" />
+          <img src="../../assets/hand.png" alt="AR Prompt" />
         </div>
 
         <button id="ar-failure">AR is not tracking!</button>
