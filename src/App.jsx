@@ -1,21 +1,13 @@
-import { VRButton, ARButton, XR, Controllers, Hands } from "@react-three/xr";
-import { Canvas } from "@react-three/fiber";
-function App() {
+import React from "react";
+import ARComponent from "./ARComponent ";
+
+const App = () => {
   return (
-    <>
-      <VRButton />
-      <Canvas>
-        <XR>
-          <Controllers />
-          <Hands />
-          <mesh>
-            <boxGeometry />
-            <meshBasicMaterial color="blue" />
-          </mesh>
-        </XR>
-      </Canvas>
-    </>
+    <div>
+      <h1>AR Demo</h1>
+      <ARComponent />
+    </div>
   );
-}
+};
 
 export default App;
