@@ -6,49 +6,64 @@ const ARComponent = () => {
   const containerRef = useRef();
 
   useEffect(() => {
-    // Create a three.js scene
-    const scene = new THREE.Scene();
+    let renderer, camera, scene, cube;
 
-    // Create a three.js camera
-    const camera = new THREE.PerspectiveCamera(
-      70,
-      window.innerWidth / window.innerHeight,
-      0.01,
-      20
-    );
-    camera.position.set(0, 1.6, 3);
+    const init = () => {
+      // Create a three.js scene
+      scene = new THREE.Scene();
 
-    // Create a three.js renderer
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.xr.enabled = true;
-    containerRef.current.appendChild(renderer.domElement);
+      // Create a three.js camera
+      camera = new THREE.PerspectiveCamera(
+        70,
+        window.innerWidth / window.innerHeight,
+        0.01,
+        20
+      );
+      camera.position.set(0, 1.6, 3);
 
-    // Add AR button to enter AR mode
-    document.body.appendChild(ARButton.createButton(renderer));
+      // Create a three.js renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.xr.enabled = true;
+      containerRef.current.appendChild(renderer.domElement);
 
-    // Add a cube to the scene
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshNormalMaterial();
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+      // Add AR button to enter AR mode
+      document.body.appendChild(ARButton.createButton(renderer));
 
-    // Render loop
-    const animate = () => {
-      renderer.setAnimationLoop(() => {
-        cube.rotation.y += 0.01;
-        renderer.render(scene, camera);
-      });
+      // Add a plane to the scene
+      const planeGeometry = new THREE.PlaneGeometry(2, 2);
+      const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+      const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+      scene.add(plane);
+
+      // Add a cube to the scene
+      const cubeGeometry = new THREE.BoxGeometry();
+      const cubeMaterial = new THREE.MeshNormalMaterial();
+      cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+      scene.add(cube);
+
+      // Position the cube on top of the plane
+      cube.position.set(0, 0.5, 0);
+
+      // Render loop
+      const animate = () => {
+        renderer.setAnimationLoop(() => {
+          cube.rotation.y += 0.01;
+          renderer.render(scene, camera);
+        });
+      };
+
+      // Clean up on unmount
+      return () => {
+        renderer.setAnimationLoop(null);
+        document.body.removeChild(renderer.domElement);
+      };
+
+      // Start rendering
+      animate();
     };
 
-    // Clean up on unmount
-    return () => {
-      renderer.setAnimationLoop(null);
-      document.body.removeChild(renderer.domElement);
-    };
-
-    // Start rendering
-    animate();
+    init();
   }, []);
 
   return <div ref={containerRef}></div>;
