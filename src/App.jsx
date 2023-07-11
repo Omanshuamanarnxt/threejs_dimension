@@ -7,10 +7,6 @@ const App = () => {
   useEffect(() => {
     const modelViewer = modelViewerRef.current;
 
-    modelViewer.querySelector("#src").addEventListener("input", (event) => {
-      modelViewer.src = event.target.value;
-    });
-
     const checkbox = modelViewer.querySelector("#show-dimensions");
 
     function setVisibility(element) {
@@ -162,47 +158,29 @@ const App = () => {
     });
   }, []);
   useEffect(() => {
-    const modelViewer = modelViewerRef.current;
-
     const arButton = document.getElementById("ar-button");
-    const arPrompt = document.getElementById("ar-prompt");
-    const arFailure = document.getElementById("ar-failure");
+    const modelViewer = document.querySelector("model-viewer");
 
     arButton.addEventListener("click", () => {
       modelViewer.enterAR();
     });
 
-    modelViewer.addEventListener("ar-status", (event) => {
-      if (event.detail.status === "session-started") {
-        arPrompt.style.display = "none";
-        arFailure.style.display = "none";
-      } else if (event.detail.status === "not-supported") {
-        arButton.style.display = "none";
-        arPrompt.style.display = "none";
-        arFailure.style.display = "block";
-      } else if (event.detail.status === "session-failed") {
-        arButton.style.display = "none";
-        arPrompt.style.display = "none";
-        arFailure.style.display = "block";
-      }
+    arButton.addEventListener("touchstart", () => {
+      arButton.style.backgroundColor = "#e8eaed";
+    });
+
+    arButton.addEventListener("touchend", () => {
+      arButton.style.backgroundColor = "#fff";
+    });
+
+    arButton.addEventListener("focus", () => {
+      arButton.style.outline = "none";
+    });
+
+    arButton.addEventListener("blur", () => {
+      arButton.style.outline = "1px solid #4285f4";
     });
   }, []);
-
-  const switchSrc = (event) => {
-    const selectedValue = event.target.value;
-    const modelViewer = modelViewerRef.current;
-
-    if (selectedValue === "chair") {
-      modelViewer.src =
-        "https://arnxt-models-webar.s3.ap-south-1.amazonaws.com/curtain.glb";
-    } else if (selectedValue === "mixer") {
-      modelViewer.src =
-        "https://arnxt-models-webar.s3.ap-south-1.amazonaws.com/curtain.glb";
-    } else if (selectedValue === "cactus") {
-      modelViewer.src =
-        "https://arnxt-models-webar.s3.ap-south-1.amazonaws.com/curtain.glb";
-    }
-  };
 
   return (
     <div>
@@ -297,24 +275,6 @@ const App = () => {
         </svg>
 
         <div id="controls" className="dim">
-          <label htmlFor="src">Product:</label>
-          <select id="src">
-            <option value="https://arnxt-models-webar.s3.ap-south-1.amazonaws.com/curtain.glb">
-              Chair
-            </option>
-            <option
-              value="https://arnxt-models-webar.s3.ap-south-1.amazonaws.com/curtain.glb"
-              disabled>
-              Mixer
-            </option>
-            <option
-              value="https://arnxt-models-webar.s3.ap-south-1.amazonaws.com/curtain.glb"
-              disabled>
-              Cactus
-            </option>
-          </select>
-          <br />
-
           <label htmlFor="show-dimensions">Show Dimensions:</label>
           <input id="show-dimensions" type="checkbox" defaultChecked={true} />
         </div>
